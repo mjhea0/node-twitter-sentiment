@@ -73,7 +73,6 @@ $ npm install sentimental --save
 // module dependencies
 var express = require('express'),
   routes = require('./routes'),
-  user = require('./routes/user'),
   http = require('http'),
   path = require('path'),
   fs = require('fs'),
@@ -81,7 +80,7 @@ var express = require('express'),
   sentimental = require('Sentimental');
 
 // twitter config file
-var config = require('./config');
+// var config = require('./config');
 
 // create express app  
 var app = express();
@@ -123,7 +122,7 @@ Let's setup our routes next.
 var path = require("path");
 
 exports.index = function(req, res){
-  res.render('index', { title: "Twitter Decider"});
+  res.render('index', { title: "Twit-Decision"});
 };
 
 exports.ping = function(req, res){
@@ -131,5 +130,44 @@ exports.ping = function(req, res){
 };
 ```
 
+Again, pretty straightforward here. We are serving up one page, *index*, while the second render parameter passes the title to the view. We also added a test route, called *ping*, which will just display ping on the page.
+
+Test it out. Navigate to [http://localhost:3000/ping](http://localhost:3000/ping). You should see "pong!" in the top left corner.
+
+### 4. Views
+
+Update *index.jade*
+
+```html
+doctype html
+html
+  head
+    title= title
+    meta(charset='utf-8')
+    meta(name='viewport', content='width=device-width, initial-scale=1.0')
+    meta(name='description', content='')
+    meta(name='author', content='')
+    link(href='http://netdna.bootstrapcdn.com/bootswatch/3.1.0/yeti/bootstrap.min.css', rel='stylesheet', media='screen')
+    link(href='/css/main.css', rel='stylesheet', media='screen')
+    link(href='/css/font-awesome.min.css', rel='stylesheet', media='screen')
+    script(src='http://code.jquery.com/jquery.js')
+    script(src='js/bootstrap.min.js')
+    script(src='js/main.js')
+  body
+    .container
+      .jumbotron
+        h1 Need to make a decision?
+        p.lead Use Twitter sentiment analysis.
+        br
+        .form-container
+          form(action='', method='post')
+            input#choice1.choice(type='text', data-choice='1', placeholder='Choice #1...', name='choice1')
+            input#choice2.choice(type='text', data-choice='2', placeholder='Choice #2...', name='choice2')
+            input#decision.btn.btn-success.btn-lg(type='submit', value='Decide!')
+        .decision-container
+          p#status
+          p#decision-text
+          p#score
+```
 
 

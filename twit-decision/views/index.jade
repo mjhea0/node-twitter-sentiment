@@ -1,5 +1,29 @@
-extends layout
-
-block content
-  h1= title
-  p Welcome to #{title}
+doctype html
+html
+  head
+    title= title
+    meta(charset='utf-8')
+    meta(name='viewport', content='width=device-width, initial-scale=1.0')
+    meta(name='description', content='')
+    meta(name='author', content='')
+    link(href='http://netdna.bootstrapcdn.com/bootswatch/3.1.0/yeti/bootstrap.min.css', rel='stylesheet', media='screen')
+    link(href='/css/main.css', rel='stylesheet', media='screen')
+    link(href='/css/font-awesome.min.css', rel='stylesheet', media='screen')
+    script(src='http://code.jquery.com/jquery.js')
+    script(src='js/bootstrap.min.js')
+    script(src='js/main.js')
+  body
+    .container
+      .jumbotron
+        h1 Need to make a decision?
+        p.lead Use Twitter sentiment analysis.
+        br
+        .form-container
+          form(action='', method='post')
+            input#choice1.choice(type='text', data-choice='1', placeholder='Choice #1...', name='choice1')
+            input#choice2.choice(type='text', data-choice='2', placeholder='Choice #2...', name='choice2')
+            input#decision.btn.btn-success.btn-lg(type='submit', value='Decide!')
+        .decision-container
+          p#status
+          p#decision-text
+          p#score

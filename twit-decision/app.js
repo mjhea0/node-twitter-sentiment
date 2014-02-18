@@ -1,7 +1,6 @@
 // module dependencies
 var express = require('express'),
   routes = require('./routes'),
-  user = require('./routes/user'),
   http = require('http'),
   path = require('path'),
   fs = require('fs'),
@@ -9,7 +8,7 @@ var express = require('express'),
   sentimental = require('Sentimental');
 
 // twitter config file
-var config = require('./config');
+// var config = require('./config');
 
 // create express app  
 var app = express();
@@ -35,6 +34,7 @@ if ('development' == app.get('env')) {
 app.get('/', routes.index);
 app.get('/ping', routes.ping);
 
+// create server
 http.createServer(app).listen(app.get('port'), function(){
   console.log('Express server listening on port ' + app.get('port'));
 });
