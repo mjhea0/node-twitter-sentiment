@@ -167,12 +167,51 @@ html
     script(src='http://code.jquery.com/jquery.js')
     script(src='http://nettdna.bootstrapcdn.com/bootstrap/3.1.1/js/bootstrap.min.js')
     script(src='javascripts/main.js')
-
 ```
 
-This is our only template that we need. It's the *index* page and coded using the [Jade Template Langage](http://jade-lang.com/). If this is confusing, I suggest converting this code to HTML and comparing the differences.We have the typical meta tags a links to CSS sheets in the `<head>`. The `<body>` includes a form as well as a number of selectors for appending the results of the sentiment analysis. Most of the styling is done in Bootstrap.
+This is our only template that we need. It's the *index* page, used for markup, and coded using the [Jade Template Langage](http://jade-lang.com/). If this is confusing, I suggest converting this code to HTML and comparing the differences.We have the typical meta tags a links to CSS sheets in the `<head>`. The `<body>` includes a form as well as a number of selectors for appending the results of the sentiment analysis. Most of the styling is done in Bootstrap.
 
 Let's quickly jump to the client side.
 
 ## Client Side
+
+### 1. Styles
+
+Add these custom styles to the *main.css* style within the "stylesheets" folder:
+
+```css
+.container {
+  max-width: 1000px;
+  padding-top: 50px;
+  text-align: center;
+}
+.choice {
+  width:100%;
+  height:50px;
+  font-size:25px;
+  padding:10px;
+}
+#decision-text {
+  font-weight:bold;
+  font-size:60px;
+}
+#decision {
+  margin-top:10px;
+}
+#status, #score {
+  font-size:25px;
+}
+.form-container {
+  margin: auto;
+  max-width: 500px;
+}
+.decision-container {
+  margin: auto;
+  max-width: 500px;
+}
+```
+
+If you're curious, see how these align up to the selectors in the jade template.
+
+
 
