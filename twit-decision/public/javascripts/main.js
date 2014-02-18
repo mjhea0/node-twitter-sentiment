@@ -11,7 +11,7 @@ $(function () {
     $("#score").text('');
     // hide decision text
     $("#decision-text").hide();
-    // display process text
+    // display processing text, update color to black in case of an error
     $("#status").css("color", "black");
     $("#status").text("Processing ...");
     // create variable to see if any of the inputs are input
@@ -53,20 +53,12 @@ $(function () {
       $("#status").text("You did not enter a value for one of the choices.");
     }
   }
-  
+
 
 
   // ----- MAIN ----- //
 
   // on click, run the goDecide function
   $("#decision").click(goDecide);
-  // grab values
-  $(".example").click(function(e) {
-    var choice1 = $(this).attr("data-choice1");
-    var choice2 = $(this).attr("data-choice2");
-    $("#choice1").val(choice1);
-    $("#choice2").val(choice2);
-    goDecide(e);
-  });
 
 });
