@@ -45,12 +45,12 @@ $(function () {
       } else {
         // error code
         $("#status").css("color", "red");
-        $("#status").text("Both choice #1 and choice #2 are the same.");
+        $("#status").text("Both choises are the same. Try again.");
       }
     } else {
       // error code
       $("#status").css("color", "red");
-      $("#status").text("You did not enter a value for one of the choices.");
+      $("#status").text("You must enter a value for both choices.");
     }
   }
 
