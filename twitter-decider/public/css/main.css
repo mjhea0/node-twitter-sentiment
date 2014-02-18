@@ -1,9 +1,7 @@
-form {
-  margin:0px 0px 0px 0px;
-}
 .container {
-  max-width: 900px;
+  max-width: 1000px;
   padding-top: 50px;
+  text-align: center;
 }
 .choice {
   width:100%;
@@ -14,14 +12,12 @@ form {
 #decision-text {
   font-weight:bold;
   font-size:64px;
-  text-align:center;
 }
 #decision {
   margin-top:10px;
 }
 #status, #score {
-  text-align:center;
-  font-size:16px;
+  font-size:20px;
 }
 #status {
   margin-top:-10px;
@@ -33,13 +29,4 @@ form {
 .decision-container {
   float:left;
   width:50%;
-}
-
-.btn-xl {
-    padding: 18px 28px;
-    font-size: 22px; 
-    line-height: normal;
-    -webkit-border-radius: 8px;
-       -moz-border-radius: 8px;
-            border-radius: 8px;
 }
