@@ -149,10 +149,6 @@ html
     meta(name='author', content='')
     link(href='http://netdna.bootstrapcdn.com/bootswatch/3.1.0/yeti/bootstrap.min.css', rel='stylesheet', media='screen')
     link(href='/css/main.css', rel='stylesheet', media='screen')
-    link(href='/css/font-awesome.min.css', rel='stylesheet', media='screen')
-    script(src='http://code.jquery.com/jquery.js')
-    script(src='js/bootstrap.min.js')
-    script(src='js/main.js')
   body
     .container
       .jumbotron
@@ -168,6 +164,12 @@ html
           p#status
           p#decision-text
           p#score
+    script(src='http://code.jquery.com/jquery.js')
+    script(src='js/bootstrap.min.js')
+    script(src='js/main.js')
 ```
 
+This is our only template that we need. It's the *index* page and coded using the [Jade Template Langage](http://jade-lang.com/). If this is confusing, I suggest converting this code to HTML and comparing the differences.We have the typical meta tags a links to CSS sheets in the `<head>`. The `<body>` includes a form as well as a number of selectors for appending the results of the sentiment analysis. Most of the styling is done in Bootstrap.
+
+###
 
