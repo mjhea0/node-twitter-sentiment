@@ -11,6 +11,7 @@ $(function () {
     $("#score").text('');
     // hide decision text
     $("#decision-text").hide();
+    $("#again").hide();
     // display processing text, update color to black in case of an error
     $("#status").css("color", "black");
     $("#status").text("Processing ...");
@@ -32,8 +33,8 @@ $(function () {
     // Handling *some* errors
     if(!anyEmpty) {
       if($("#choice1").val() != $("#choice2").val()) {
-        // send values to server side for pricessing, wait for callback, getting AJAXy
-        $.post('/query', {'choices': JSON.stringify(choices)}, function(data) {
+        // send values to server side for processing, wait for callback, getting AJAXy
+        $.post('/search', {'choices': JSON.stringify(choices)}, function(data) {
           data = JSON.parse(data);
           // append data to the DOM
           $(".form-container").hide()
@@ -42,6 +43,7 @@ $(function () {
           $("#score").text('... with a score of ' + data['score'] + '');
           $("#decision-text").fadeIn();
           $("#score").fadeIn();
+          $("#again").show()
         });
       } else {
         // error code
@@ -61,5 +63,15 @@ $(function () {
 
   // on click, run the goDecide function
   $("#decision").click(goDecide);
+  // on click new form is shown
+  $("#again").click(function {
+    $(".form-container").show()
+    $("#again").hide()
+    // erase old values
+    $("#status").text('');
+    $("#score").text('');
+    // hide decision text
+    $("#decision-text").hide();
+  });
 
 });

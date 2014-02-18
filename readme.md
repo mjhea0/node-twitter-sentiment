@@ -75,12 +75,7 @@ var express = require('express'),
   routes = require('./routes'),
   http = require('http'),
   path = require('path'),
-  fs = require('fs'),
-  twit = require('twit'),
-  sentimental = require('Sentimental');
-
-// twitter config file
-// var config = require('./config');
+  fs = require('fs');
 
 // create express app  
 var app = express();
@@ -155,15 +150,19 @@ html
         h1 Need to make a decision?
         p.lead Use Twitter sentiment analysis.
         br
+        br
         .form-container
           form(action='', method='post')
             input#choice1.choice(type='text', data-choice='1', placeholder='Choice #1...', name='choice1')
             input#choice2.choice(type='text', data-choice='2', placeholder='Choice #2...', name='choice2')
             input#decision.btn.btn-success.btn-lg(type='submit', value='Decide!')
+        br
+        br
         .decision-container
           p#status
           p#decision-text
           p#score
+          p#again.btn.btn-success.btn-lg(value='Again?')
     script(src='http://code.jquery.com/jquery.js')
     script(src='http://nettdna.bootstrapcdn.com/bootstrap/3.1.1/js/bootstrap.min.js')
     script(src='javascripts/main.js')
@@ -215,17 +214,242 @@ If you're curious, see how these CSS styles (values and properties) align up to 
 
 ### 2. Client Side Javascript
 
+```javascript
+$(function () {
+
+  // highest # of choices (inputs) allowed
+  window.highestChoice = 2;
+
+  var goDecide = function(e) {
+    // prevent default browser behavior upon submit
+    e.preventDefault();
+    // erase old values
+    $("#status").text('');
+    $("#score").text('');
+    // hide decision text
+    $("#decision-text").hide();
+    $("#again").hide();
+    // display processing text, update color to black in case of an error
+    $("#status").css("color", "black");
+    $("#status").text("Processing ...");
+    // create variable to see if any of the inputs are input
+    var anyEmpty = false;
+    // array to hold inputs
+    var choices = [];
+    // grab values, add to choices array
+    for(var i = 1; i <= window.highestChoice; i++) {
+      var choiceValue = $("#choice"+i).val();
+      if(choiceValue == '') {
+        anyEmpty = true;
+      } else {
+        if(choices.indexOf(choiceValue) == -1) {
+          choices.push(choiceValue);
+        }
+      }
+    }
+    // Handling *some* errors
+    if(!anyEmpty) {
+      if($("#choice1").val() != $("#choice2").val()) {
+        // send values to server side for processing, wait for callback, getting AJAXy
+        $.post('/search', {'choices': JSON.stringify(choices)}, function(data) {
+          data = JSON.parse(data);
+          // append data to the DOM
+          $(".form-container").hide()
+          $("#status").text("and the winner is ...");
+          $("#decision-text").text(data['choice']);
+          $("#score").text('... with a score of ' + data['score'] + '');
+          $("#decision-text").fadeIn();
+          $("#score").fadeIn();
+          $("#again").show()
+        });
+      } else {
+        // error code
+        $("#status").css("color", "red");
+        $("#status").text("Both choices are the same. Try again.");
+      }
+    } else {
+      // error code
+      $("#status").css("color", "red");
+      $("#status").text("You must enter a value for both choices.");
+    }
+  }
+
+
+
+  // ----- MAIN ----- //
+
+  // on click, run the goDecide function
+  $("#decision").click(goDecide);
+  // on click new form is shown
+  $("#again").click(function {
+    $(".form-container").show()
+    $("#again").hide()
+    // erase old values
+    $("#status").text('');
+    $("#score").text('');
+    // hide decision text
+    $("#decision-text").hide();
+  });
+
+});
+```
+
 Now comes the fun part! Add a *main.js* file to your "javascripts" folder. 
+
+Yes, there's a lot going on here. Fortunately, it's well documented. 
+
+Start with the `// ----- MAIN ----- //` code. This essentially controls everything else. Nothing happens until the decision button is clicked. Once that happens the `goDecide()` function fires. This is where things get, well, interested.
+
+Go through it line by line, reading the comment, then code. Make sure you understand what each statement is doing. 
+
+Notice how the magic starts happening when the data is grabed from the inputs, added to an array, and then sent to the server side via AJAX. Notice the `/search` endpoint. We pass the stringified `choice` array to that endpoint, which needs to be setup on the server side, then what for the data to comeback before appending it to the DOM.
+
+Check out the rest of the code on your own. Follow the comments for assistence.
 
 ## Back to the Server Side
 
-### Twitter
+So, we need to set up a new route, '/search', on the server side to handle the data sent from the client side.
 
-### Config
+### 1. *app.js*
 
-### Routes
+First, add the route to *app.js*:
+
+```javascript
+app.post('/search', routes.search)
+```
+
+### 2. Update routes:
+
+Then add the following code to *index.js* in the "routes" folder:
+
+```javascript
+exports.search = function(req, res) {
+  // grab the request from the client
+  var choices = JSON.parse(req.body.choices);
+  // grab the current date
+  var today = new Date();
+  // establish the twitter config (grab your keys at dev.twitter.com)
+  var twitter = new twit({
+    consumer_key: config.consumer_key,
+    consumer_secret: config.consumer_secret,
+    access_token: config.access_token,
+    access_token_secret: config.access_token_secret
+  });
+  // set highest score
+  var highestScore = -Infinity;
+  // set highest choice
+  var highestChoice = null;
+  // create new array
+  var array = [];
+  // set score
+  var score = 0;
+  console.log("----------")
+
+  // iterate through the choices array from the request
+  for(var i = 0; i < choices.length; i++) {
+    (function(i) {
+    // add choice to new array
+    array.push(choices[i])
+    // grad 20 tweets from today
+    twitter.get('search/tweets', {q: '' + choices[i] + ' since:' + today.getFullYear() + '-' + 
+      (today.getMonth() + 1) + '-' + today.getDate(), count:20}, function(err, data) {
+        // perfrom sentiment analysis
+        score = performAnalysis(data['statuses']);
+        console.log("score:", score)
+        console.log("choice:", choices[i])
+        //  determine winner
+        if(score > highestScore) {
+          highestScore = score;
+          highestChoice = choices[i];
+          console.log("winner:",choices[i])
+        }
+        console.log("")
+      });
+    })(i)
+  }
+  // send response back to the server side; why the need for the timeout?
+  setTimeout(function() { res.end(JSON.stringify({'score': highestScore, 'choice': highestChoice})) }, 5000);	
+});
+```
+
+Again, I've commented this heaviliy. So go through, line by line, and see what's happening.
+
+Points of note:
+
+1. Add your Twitter config keys to a new file called *config.js*. More on this in the next section.
+2. Why are we using a timeout? Try removing it. What happens? Why is this a bad practice? 
+
+### 3. Config
+
+Open the *config_example.js* file. Save the file as *config.js*, then add your own [Twitter](http://dev.twitter.com) keys. Add this as a dependency along with Twit and Sentimental to your *index.js* file:
+
+```javascript
+var twit = require('twit');
+var sentimental = require('Sentimental');
+var config = require("./config")
+```
+
+### 4. Twitter
+
+Remember this line from your routes file, *index.js*:
+
+```javascript
+score = performAnalysis(data['statuses']);
+```
+
+Well, we pass the pulled tweets as arguments into the `perfromAnalysis()` function. 
+
+Let's add that function:
+
+```javascript
+function performAnalysis(tweetSet) {
+  //set a results variable
+  var results = 0;
+  // iterate through the tweets, pulling the text, retween count, and favorite count
+  for(var i = 0; i < tweetSet.length; i++) {
+    tweet = tweetSet[i]['text'];
+    retweets = tweetSet[i]['retweet_count'];
+    favorites = tweetSet[i]['favorite_count'];
+    // remove the hastag from the tweet text
+    tweet = tweet.replace('#', '');
+    // perfrom sentiment on the text
+    var score = sentimental.analyze(tweet)['score'];
+    // calculate score
+    results += score;
+    if(score > 0){
+      if(retweets > 0) {
+        results += (Math.log(retweets)/Math.log(2));
+      }
+      if(favorites > 0) {
+        results += (Math.log(favorites)/Math.log(2));
+      }
+    }
+    else if(score < 0){
+      if(retweets > 0) {
+        results -= (Math.log(retweets)/Math.log(2));
+      }
+      if(favorites > 0) {
+        results -= (Math.log(favorites)/Math.log(2));
+      }
+    }
+    else {
+      results += 0;
+    }
+  }
+  // return score
+  results = results / tweetSet.length;
+  return results
+}
+```
+
+After the tweets are passsed in, the text is parsed and sentiment is analyzed. Finally a score is calculated and returned.
+
+Boom. That's it! Test time!
+
 
 ## Conclusion
+
+Test this out a few times. Make sure it all works. Perhaps go through it iteratively, following along with the code for further understanding. 
 
 Think about what you could add to make this app more fun/unique?
 
