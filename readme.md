@@ -113,11 +113,23 @@ http.createServer(app).listen(app.get('port'), function(){
 });
 ```
 
-You've seen the majority of this code already, from the original [tutorial](https://github.com/mjhea0/node-getting-started), so I won't go into too much detail. Plus, it's heavily commented and, right now, a pretty standard Node/Express app. 
+You've seen the majority of this code already, from the original [tutorial](https://github.com/mjhea0/node-getting-started), so I won't go into too much detail. Plus, it's heavily commented and, right now, it resembles a pretty standard Node/Express app. 
 
 Let's setup our routes next.
 
 ### 3. Routes
+
+```javascript
+var path = require("path");
+
+exports.index = function(req, res){
+  res.render('index', { title: "Twitter Decider"});
+};
+
+exports.ping = function(req, res){
+  res.send("pong!", 200);
+};
+```
 
 
 
