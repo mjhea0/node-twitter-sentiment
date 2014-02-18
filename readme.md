@@ -211,7 +211,10 @@ Add these custom styles to the *main.css* style within the "stylesheets" folder:
 }
 ```
 
-If you're curious, see how these style values and properties align up to the selectors in the jade template.
+If you're curious, see how these CSS styles (values and properties) align up to the selectors in the jade template.
 
+### 2. Client Side Javascript
+
+Now comes the fun part!
 
 

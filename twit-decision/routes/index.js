@@ -1,7 +1,7 @@
 var path = require("path");
 
 exports.index = function(req, res){
-  res.render('index', { title: "Twitter Decider"});
+  res.render('index', { title: "Twit-Decision"});
 };
 
 exports.ping = function(req, res){
