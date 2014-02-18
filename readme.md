@@ -215,6 +215,13 @@ If you're curious, see how these CSS styles (values and properties) align up to 
 
 ### 2. Client Side Javascript
 
-Now comes the fun part!
+Now comes the fun part! Add a *main.js* file to your "javascripts" folder. 
+
+## Conclusion
+
+Think about what you could add to make this app more fun/unique?
+
+1. Perhaps add a persistence layer, such as MongoDB, to retain the history of your searches to see sentiment over time.
+2. Ability to display actual tweets.
 
 
