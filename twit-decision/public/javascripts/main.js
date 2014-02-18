@@ -53,6 +53,7 @@ $(function () {
       $("#status").text("You did not enter a value for one of the choices.");
     }
   }
+  
 
 
   // ----- MAIN ----- //
