@@ -36,16 +36,17 @@ $(function () {
         $.post('/query', {'choices': JSON.stringify(choices)}, function(data) {
           data = JSON.parse(data);
           // append data to the DOM
-          $("#status").text("Winner");
+          $(".form-container").hide()
+          $("#status").text("and the winner is ...");
           $("#decision-text").text(data['choice']);
-          $("#score").text('(with a score of ' + data['score'] + ')');
+          $("#score").text('... with a score of ' + data['score'] + '');
           $("#decision-text").fadeIn();
           $("#score").fadeIn();
         });
       } else {
         // error code
         $("#status").css("color", "red");
-        $("#status").text("Both choises are the same. Try again.");
+        $("#status").text("Both choices are the same. Try again.");
       }
     } else {
       // error code
