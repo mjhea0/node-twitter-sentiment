@@ -1,0 +1,16 @@
+{
+  "name": "twitter-decider",
+  "version": "0.0.1",
+  "description": "Using Twitter sentiment analysis to make decisions.",
+  "main": "app.js",
+  "scripts": {
+    "start": "node app.js "
+  },
+  "dependencies": {
+    "express": "3.3.4",
+    "jade": "~0.34.1",
+    "twit": "1.1.9",
+    "Sentimental": "0.0.4",
+    "twitter-api": "~1.0.2"
+  }
+}
