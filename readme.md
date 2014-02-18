@@ -171,5 +171,7 @@ html
 
 This is our only template that we need. It's the *index* page and coded using the [Jade Template Langage](http://jade-lang.com/). If this is confusing, I suggest converting this code to HTML and comparing the differences.We have the typical meta tags a links to CSS sheets in the `<head>`. The `<body>` includes a form as well as a number of selectors for appending the results of the sentiment analysis. Most of the styling is done in Bootstrap.
 
-###
+Let's quickly jump to the client side.
+
+## Client Side
 
