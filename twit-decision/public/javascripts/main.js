@@ -1,18 +1,23 @@
 $(function () {
 
+  // highest # of choices (inputs) allowed
   window.highestChoice = 2;
 
-  var onDecide = function(e) {
+  var goDecide = function(e) {
+    // prevent default browser behavior upon submit
     e.preventDefault();
     // erase old values
     $("#status").text('');
     $("#score").text('');
+    // hide decision text
     $("#decision-text").hide();
     // display process text
     $("#status").text("Processing ...");
+    // create variable to see if any of the inputs are input
     var anyEmpty = false;
+    // array to hold inputs
     var choices = [];
-    // grab values
+    // grab values, add to choices array
     for(var i = 1; i <= window.highestChoice; i++) {
       var choiceValue = $("#choice"+i).val();
       if(choiceValue == '') {
@@ -23,6 +28,7 @@ $(function () {
         }
       }
     }
+    // Handling *some* errors
     if(!anyEmpty) {
       if($("#choice1").val() != $("#choice2").val()) {
         // send values to server side for pricessing, wait for callback
@@ -49,15 +55,15 @@ $(function () {
   // ----- MAIN ----- //
 
 
-  // on click, run the onDecide function
-  $("#decision").click(onDecide);
+  // on click, run the goDecide function
+  $("#decision").click(goDecide);
   // grab values
   $(".example").click(function(e) {
     var choice1 = $(this).attr("data-choice1");
     var choice2 = $(this).attr("data-choice2");
     $("#choice1").val(choice1);
     $("#choice2").val(choice2);
-    onDecide(e);
+    goDecide(e);
   });
 
 });
