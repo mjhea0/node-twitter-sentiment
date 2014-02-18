@@ -217,6 +217,14 @@ If you're curious, see how these CSS styles (values and properties) align up to 
 
 Now comes the fun part! Add a *main.js* file to your "javascripts" folder. 
 
+## Back to the Server Side
+
+### Twitter
+
+### Config
+
+### Routes
+
 ## Conclusion
 
 Think about what you could add to make this app more fun/unique?
