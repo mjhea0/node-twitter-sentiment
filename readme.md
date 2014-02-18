@@ -8,7 +8,7 @@ This is for the **[Node-js-Denver-Boulder Meetup](http://www.meetup.com/Node-js-
 
 ## Project Setup
 
-As you know, Node uses Javascript for both the client and server side. Because of this, the project structure is even more important to not only seperate out different concerns (client vs server) but also for your own understanding - e.g., so you can distinguish between client and server side code.
+As you know, Node uses Javascript for both the client and server side. Because of this, the project structure is even more important to not only separate out different concerns (client vs server) but also for your own understanding - e.g., so you can distinguish between client and server side code.
 
 Let's get to it.
 
@@ -168,7 +168,7 @@ html
     script(src='javascripts/main.js')
 ```
 
-This is our only template that we need. It's the *index* page, used for markup, and coded using the [Jade Template Langage](http://jade-lang.com/). If this is confusing, I suggest converting this code to HTML and comparing the differences.We have the typical meta tags a links to CSS sheets in the `<head>`. The `<body>` includes a form as well as a number of selectors for appending the results of the sentiment analysis. Most of the styling is done in Bootstrap.
+This is our only template that we need. It's the *index* page, used for markup, and coded using the [Jade Template Language](http://jade-lang.com/). If this is confusing, I suggest converting this code to HTML and comparing the differences.We have the typical meta tags a links to CSS sheets in the `<head>`. The `<body>` includes a form as well as a number of selectors for appending the results of the sentiment analysis. Most of the styling is done in Bootstrap.
 
 Let's quickly jump to the client side.
 
@@ -302,9 +302,9 @@ Start with the `// ----- MAIN ----- //` code. This essentially controls everythi
 
 Go through it line by line, reading the comment, then code. Make sure you understand what each statement is doing. 
 
-Notice how the magic starts happening when the data is grabed from the inputs, added to an array, and then sent to the server side via AJAX. Notice the `/search` endpoint. We pass the stringified `choice` array to that endpoint, which needs to be setup on the server side, then what for the data to comeback before appending it to the DOM.
+Notice how the magic starts happening when the data is grabbed from the inputs, added to an array, and then sent to the server side via AJAX. Notice the `/search` endpoint. We pass the stringified `choice` array to that endpoint, which needs to be setup on the server side, then what for the data to comeback before appending it to the DOM.
 
-Check out the rest of the code on your own. Follow the comments for assistence.
+Check out the rest of the code on your own. Follow the comments for assistance.
 
 ## Back to the Server Side
 
@@ -353,7 +353,7 @@ exports.search = function(req, res) {
     // grad 20 tweets from today
     twitter.get('search/tweets', {q: '' + choices[i] + ' since:' + today.getFullYear() + '-' + 
       (today.getMonth() + 1) + '-' + today.getDate(), count:20}, function(err, data) {
-        // perfrom sentiment analysis
+        // perform sentiment analysis
         score = performAnalysis(data['statuses']);
         console.log("score:", score)
         console.log("choice:", choices[i])
@@ -372,7 +372,7 @@ exports.search = function(req, res) {
 });
 ```
 
-Again, I've commented this heaviliy. So go through, line by line, and see what's happening.
+Again, I've commented this heavily. So go through, line by line, and see what's happening.
 
 Points of note:
 
@@ -397,22 +397,22 @@ Remember this line from your routes file, *index.js*:
 score = performAnalysis(data['statuses']);
 ```
 
-Well, we pass the pulled tweets as arguments into the `perfromAnalysis()` function. 
-
+Well, we pass the pulled tweets as arguments into the `performAnalysis()` function. 
+performAnalysis
 Let's add that function:
 
 ```javascript
 function performAnalysis(tweetSet) {
   //set a results variable
   var results = 0;
-  // iterate through the tweets, pulling the text, retween count, and favorite count
+  // iterate through the tweets, pulling the text, retweet count, and favorite count
   for(var i = 0; i < tweetSet.length; i++) {
     tweet = tweetSet[i]['text'];
     retweets = tweetSet[i]['retweet_count'];
     favorites = tweetSet[i]['favorite_count'];
     // remove the hastag from the tweet text
     tweet = tweet.replace('#', '');
-    // perfrom sentiment on the text
+    // perform sentiment on the text
     var score = sentimental.analyze(tweet)['score'];
     // calculate score
     results += score;
@@ -442,10 +442,30 @@ function performAnalysis(tweetSet) {
 }
 ```
 
-After the tweets are passsed in, the text is parsed and sentiment is analyzed. Finally a score is calculated and returned.
+After the tweets are passed in, the text is parsed and sentiment is analyzed. Finally a score is calculated and returned.
 
-Boom. That's it! Test time!
+Boom. That's it! 
 
+Your project structure should now look like:
+
+```sh
+.
+├── app.js
+├── config.js
+├── package.json
+├── public
+│   ├── images
+│   ├── javascripts
+│   │   └── main.js
+│   └── stylesheets
+│       └── main.css
+├── routes
+│   └── index.js
+└── views
+    └── index.jade
+```
+
+Test time!
 
 ## Conclusion
 

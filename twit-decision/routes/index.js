@@ -62,12 +62,12 @@ exports.search = function(req, res) {
 function performAnalysis(tweetSet) {
   //set a results variable
   var results = 0;
-  // iterate through the tweets, pulling the text, retween count, and favorite count
+  // iterate through the tweets, pulling the text, retweet count, and favorite count
   for(var i = 0; i < tweetSet.length; i++) {
     tweet = tweetSet[i]['text'];
     retweets = tweetSet[i]['retweet_count'];
     favorites = tweetSet[i]['favorite_count'];
-    // remove the hastag from the tweet text
+    // remove the hashtag from the tweet text
     tweet = tweet.replace('#', '');
     // perfrom sentiment on the text
     var score = sentimental.analyze(tweet)['score'];
