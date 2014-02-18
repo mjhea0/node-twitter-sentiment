@@ -54,8 +54,8 @@ $(function () {
     }
   }
 
-  // ----- MAIN ----- //
 
+  // ----- MAIN ----- //
 
   // on click, run the goDecide function
   $("#decision").click(goDecide);
