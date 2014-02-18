@@ -12,6 +12,7 @@ $(function () {
     // hide decision text
     $("#decision-text").hide();
     // display process text
+    $("#status").css("color", "black");
     $("#status").text("Processing ...");
     // create variable to see if any of the inputs are input
     var anyEmpty = false;
@@ -31,9 +32,10 @@ $(function () {
     // Handling *some* errors
     if(!anyEmpty) {
       if($("#choice1").val() != $("#choice2").val()) {
-        // send values to server side for pricessing, wait for callback
+        // send values to server side for pricessing, wait for callback, getting AJAXy
         $.post('/query', {'choices': JSON.stringify(choices)}, function(data) {
           data = JSON.parse(data);
+          // append data to the DOM
           $("#status").text("Winner");
           $("#decision-text").text(data['choice']);
           $("#score").text('(with a score of ' + data['score'] + ')');
