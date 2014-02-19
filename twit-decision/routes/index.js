@@ -1,7 +1,7 @@
 var path = require("path");
 var twit = require('twit');
 var sentimental = require('Sentimental');
-var config = require("./config");
+var config = require("../config");
 
 exports.index = function(req, res){
   res.render('index', { title: "Twit-Decision"});
@@ -57,7 +57,7 @@ exports.search = function(req, res) {
   }
   // send response back to the server side; why the need for the timeout?
   setTimeout(function() { res.end(JSON.stringify({'score': highestScore, 'choice': highestChoice})) }, 5000);	
-});
+};
 
 function performAnalysis(tweetSet) {
   //set a results variable

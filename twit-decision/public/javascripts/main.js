@@ -2,6 +2,8 @@ $(function () {
 
   // highest # of choices (inputs) allowed
   window.highestChoice = 2;
+  // hide again button on page load
+  $("#again").hide();
 
   var goDecide = function(e) {
     // prevent default browser behavior upon submit
@@ -64,12 +66,14 @@ $(function () {
   // on click, run the goDecide function
   $("#decision").click(goDecide);
   // on click new form is shown
-  $("#again").click(function {
+  $("#again").click(function() {
     $(".form-container").show()
     $("#again").hide()
     // erase old values
     $("#status").text('');
     $("#score").text('');
+    $("#choice1").val('');
+    $("#choice2").val('');
     // hide decision text
     $("#decision-text").hide();
   });

@@ -54,7 +54,7 @@ $ cd twit-decision && npm install
 $ node app
 ```
 
-You should see the "Welcome to Express Text".
+You should see the "Welcome to Express" Text.
 
 ## Server Side Code
 
@@ -162,9 +162,9 @@ html
           p#status
           p#decision-text
           p#score
-          p#again.btn.btn-success.btn-lg(value='Again?')
-    script(src='http://code.jquery.com/jquery.js')
-    script(src='http://nettdna.bootstrapcdn.com/bootstrap/3.1.1/js/bootstrap.min.js')
+          input#again.btn.btn-success.btn-lg(value='Again?')
+    script(src='http://code.jquery.com/jquery-1.11.0.min.js')
+    script(src='http://netdna.bootstrapcdn.com/bootstrap/3.1.1/js/bootstrap.min.js')
     script(src='javascripts/main.js')
 ```
 
@@ -219,6 +219,8 @@ $(function () {
 
   // highest # of choices (inputs) allowed
   window.highestChoice = 2;
+  // hide again button on page load
+  $("#again").hide();
 
   var goDecide = function(e) {
     // prevent default browser behavior upon submit
@@ -281,17 +283,20 @@ $(function () {
   // on click, run the goDecide function
   $("#decision").click(goDecide);
   // on click new form is shown
-  $("#again").click(function {
+  $("#again").click(function() {
     $(".form-container").show()
     $("#again").hide()
     // erase old values
     $("#status").text('');
     $("#score").text('');
+    $("#choice1").val('');
+    $("#choice2").val('');
     // hide decision text
     $("#decision-text").hide();
   });
 
 });
+
 ```
 
 Now comes the fun part! Add a *main.js* file to your "javascripts" folder. 
@@ -369,7 +374,7 @@ exports.search = function(req, res) {
   }
   // send response back to the server side; why the need for the timeout?
   setTimeout(function() { res.end(JSON.stringify({'score': highestScore, 'choice': highestChoice})) }, 5000);	
-});
+};
 ```
 
 Again, I've commented this heavily. So go through, line by line, and see what's happening.
