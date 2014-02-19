@@ -64,7 +64,7 @@ We'll start with the server side. Our server code will be responsible for servin
 
 ```sh
 $ npm install twit --save
-$ npm install sentimental --save
+$ npm install Sentimental --save
 ```
 
 ### 2. Updated *app.js* code
