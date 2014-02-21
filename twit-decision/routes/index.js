@@ -1,3 +1,5 @@
+"use strict";
+
 var path = require("path");
 var twit = require('twit');
 var sentimental = require('Sentimental');
@@ -64,9 +66,9 @@ function performAnalysis(tweetSet) {
   var results = 0;
   // iterate through the tweets, pulling the text, retweet count, and favorite count
   for(var i = 0; i < tweetSet.length; i++) {
-    tweet = tweetSet[i]['text'];
-    retweets = tweetSet[i]['retweet_count'];
-    favorites = tweetSet[i]['favorite_count'];
+    var tweet = tweetSet[i]['text'];
+    var retweets = tweetSet[i]['retweet_count'];
+    var favorites = tweetSet[i]['favorite_count'];
     // remove the hashtag from the tweet text
     tweet = tweet.replace('#', '');
     // perfrom sentiment on the text
