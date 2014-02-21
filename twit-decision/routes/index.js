@@ -4,6 +4,7 @@ var path = require("path");
 var twit = require('twit');
 var sentimental = require('Sentimental');
 var config = require("../config");
+var async = require('async');
 
 exports.index = function(req, res){
   res.render('index', { title: "Twit-Decision"});
@@ -25,41 +26,44 @@ exports.search = function(req, res) {
     access_token: config.access_token,
     access_token_secret: config.access_token_secret
   });
-  // set highest score
-  var highestScore = -Infinity;
-  // set highest choice
-  var highestChoice = null;
-  // create new array
-  var array = [];
-  // set score
-  var score = 0;
   console.log("----------")
 
-  // iterate through the choices array from the request
-  for(var i = 0; i < choices.length; i++) {
-    (function(i) {
-    // add choice to new array
-    array.push(choices[i])
-    // grad 20 tweets from today
-    twitter.get('search/tweets', {q: '' + choices[i] + ' since:' + today.getFullYear() + '-' + 
+  // grade 20 tweets from today with keyword choice and call callback
+  // when done
+  function getAndScoreTweets(choice, callback) {
+    twitter.get('search/tweets', {q: '' + choice + ' since:' + today.getFullYear() + '-' + 
       (today.getMonth() + 1) + '-' + today.getDate(), count:20}, function(err, data) {
         // perfrom sentiment analysis (see below)
-        score = performAnalysis(data['statuses']);
-        console.log("score:", score)
-        console.log("choice:", choices[i])
-        //  determine winner
-        if(score > highestScore) {
-          highestScore = score;
-          highestChoice = choices[i];
-          console.log("winner:",choices[i])
-        }
-        console.log("")
-      });
-    })(i)
+      if(err) {
+        console.log(err);
+        callback(err.message, undefined);
+        return;
+      }
+      var score = performAnalysis(data['statuses']);
+      console.log("score:", score)
+      console.log("choice:", choice)
+      callback(null, score);
+    });
   }
-  // send response back to the server side; why the need for the timeout?
-  setTimeout(function() { res.end(JSON.stringify({'score': highestScore, 'choice': highestChoice})) }, 5000);	
-};
+  //Grade tweets for each choice in parallel and compute winner when
+  //all scores are collected
+  async.map(choices, getAndScoreTweets, function(err, scores) {
+    if(err) {
+      console.log("Unable to score all tweets");
+      res.end(JSON.stringify(err));
+    }
+    var highestChoice = choices[0];
+    var highestScore = scores.reduce(function(prev, cur, index) { 
+      if(prev < cur) {
+        highestChoice = choices[index];
+        return cur;
+      } else {
+        return prev;
+      }
+    });
+    res.end(JSON.stringify({'score': highestScore, 'choice': highestChoice}));
+  });				      
+}
 
 function performAnalysis(tweetSet) {
   //set a results variable
