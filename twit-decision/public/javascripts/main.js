@@ -3,7 +3,7 @@ $(function () {
   // highest # of choices (inputs) allowed
   window.highestChoice = 2;
   // hide again button on page load
-  $("#again").hide();
+  // $("#again").hide();
 
   var goDecide = function(e) {
     // prevent default browser behavior upon submit
@@ -24,12 +24,13 @@ $(function () {
     // grab values, add to choices array
     for(var i = 1; i <= window.highestChoice; i++) {
       var choiceValue = $("#choice"+i).val();
-      if(choiceValue == '') {
+      if (choiceValue == '') {
         anyEmpty = true;
       } else {
-        if(choices.indexOf(choiceValue) == -1) {
-          choices.push(choiceValue);
-        }
+        // if(choices.indexOf(choiceValue) == -1) {
+        //   choices.push(choiceValue);
+        // }
+        choices.push(choiceValue);
       }
     }
     // Handling *some* errors
