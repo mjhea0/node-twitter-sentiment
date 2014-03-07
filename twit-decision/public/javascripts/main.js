@@ -1,82 +1,76 @@
-$(function () {
+/*global ko, $ */
 
-  // highest # of choices (inputs) allowed
-  window.highestChoice = 2;
-  // hide again button on page load
-  // $("#again").hide();
+function ViewModel() {
+    'use strict';
+    var self = this;
+    // constants
+    self.RESULTS_START_HTML = 'and the winner is ... <strong>';
+    self.RESULTS_END_HTML = '</strong> ... with a score of ';
 
-  var goDecide = function(e) {
-    // prevent default browser behavior upon submit
-    e.preventDefault();
-    // erase old values
-    $("#status").text('');
-    $("#score").text('');
-    // hide decision text
-    $("#decision-text").hide();
-    $("#again").hide();
-    // display processing text, update color to black in case of an error
-    $("#status").css("color", "black");
-    $("#status").text("Processing ...");
-    // create variable to see if any of the inputs are input
-    var anyEmpty = false;
-    // array to hold inputs
-    var choices = [];
-    // grab values, add to choices array
-    for(var i = 1; i <= window.highestChoice; i++) {
-      var choiceValue = $("#choice"+i).val();
-      if (choiceValue == '') {
-        anyEmpty = true;
-      } else {
-        // if(choices.indexOf(choiceValue) == -1) {
-        //   choices.push(choiceValue);
-        // }
-        choices.push(choiceValue);
-      }
-    }
-    // Handling *some* errors
-    if(!anyEmpty) {
-      if($("#choice1").val() != $("#choice2").val()) {
+    self.errors = {
+        'sameInputError': 'Both choices are the same. Try again.',
+        'requiredInputsError': 'You must enter a value for both choices.',
+        'unknownError': 'An unknown error occurred.'
+    };
+
+    // on screen text
+    self.error = ko.observable('');
+    self.results = ko.observable('');
+
+    // visual control
+    self.isProcessing = ko.observable(false);
+    self.hasResults = ko.observable(false);
+
+    // utility
+    self.getError = function (key) {
+        return (key && self.errors[key]) || self.errors.unknownError;
+    };
+
+    // try again
+    self.tryAgain = function () {
+        var self = this;
+
+        self.error('');
+        self.isProcessing(false);
+        self.hasResults(false);
+        self.results('');
+        self.inputOne('');
+        self.inputTwo('');
+    };
+
+    // form
+    self.inputOne = ko.observable();
+    self.inputTwo = ko.observable();
+    self.formSubmit = function () {
+        var self = this;
+
+        // some error handling
+        if (!self.inputOne() || !self.inputTwo()) {
+            self.error(self.getError('requiredInputsError'));
+        } else if (self.inputOne() === self.inputTwo()) {
+            self.error(self.getError('sameInputError'));
+        } else {
+            self.choices.push(self.inputOne());
+            self.choices.push(self.inputTwo());
+            self.getDecision();
+            self.error('');
+            self.isProcessing(true);
+        }
+    };
+
+    // posting
+    self.getDecision = function () {
+        var self = this;
+
         // send values to server side for processing, wait for callback, getting AJAXy
-        $.post('/search', {'choices': JSON.stringify(choices)}, function(data) {
-          data = JSON.parse(data);
-          // append data to the DOM
-          $(".form-container").hide()
-          $("#status").text("and the winner is ...");
-          $("#decision-text").text(data['choice']);
-          $("#score").text('... with a score of ' + data['score'] + '');
-          $("#decision-text").fadeIn();
-          $("#score").fadeIn();
-          $("#again").show()
+        $.post('/search', { 'choices': JSON.stringify(self.choices) }, function (data) {
+            var results = JSON.parse(data);
+
+            self.results(self.RESULTS_START_HTML + results.choice + self.RESULTS_END_HTML + results.score);
+            self.hasResults(true);
+            self.isProcessing(false);
         });
-      } else {
-        // error code
-        $("#status").css("color", "red");
-        $("#status").text("Both choices are the same. Try again.");
-      }
-    } else {
-      // error code
-      $("#status").css("color", "red");
-      $("#status").text("You must enter a value for both choices.");
-    }
-  }
+    };
+}
 
-
-
-  // ----- MAIN ----- //
-
-  // on click, run the goDecide function
-  $("#decision").click(goDecide);
-  // on click new form is shown
-  $("#again").click(function() {
-    $(".form-container").show()
-    $("#again").hide()
-    // erase old values
-    $("#status").text('');
-    $("#score").text('');
-    $("#choice1").val('');
-    $("#choice2").val('');
-    // hide decision text
-    $("#decision-text").hide();
-  });
-
-});
+ko.applyBindings(new ViewModel());
