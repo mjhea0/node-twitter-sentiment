@@ -2,11 +2,13 @@
 
 function ViewModel() {
     'use strict';
+	
     var self = this;
     // constants
     self.RESULTS_START_HTML = 'and the winner is ... <strong>';
     self.RESULTS_END_HTML = '</strong> ... with a score of ';
 
+	self.choices = [];
     self.errors = {
         'sameInputError': 'Both choices are the same. Try again.',
         'requiredInputsError': 'You must enter a value for both choices.',
@@ -28,8 +30,6 @@ function ViewModel() {
 
     // try again
     self.tryAgain = function () {
-        var self = this;
-
         self.error('');
         self.isProcessing(false);
         self.hasResults(false);
@@ -42,8 +42,6 @@ function ViewModel() {
     self.inputOne = ko.observable();
     self.inputTwo = ko.observable();
     self.formSubmit = function () {
-        var self = this;
-
         // some error handling
         if (!self.inputOne() || !self.inputTwo()) {
             self.error(self.getError('requiredInputsError'));
@@ -60,8 +58,6 @@ function ViewModel() {
 
     // posting
     self.getDecision = function () {
-        var self = this;
-
         // send values to server side for processing, wait for callback, getting AJAXy
         $.post('/search', { 'choices': JSON.stringify(self.choices) }, function (data) {
             var results = JSON.parse(data);
