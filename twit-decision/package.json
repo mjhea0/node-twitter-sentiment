@@ -9,6 +9,7 @@
     "express": "3.4.8",
     "jade": "*",
     "twit": "~1.1.12",
-    "Sentimental": "0.0.4"
+    "Sentimental": "0.0.4",
+    "async": "~0.2.10"
   }
 }
