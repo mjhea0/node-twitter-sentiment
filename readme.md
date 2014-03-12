@@ -1,6 +1,6 @@
 ## Node Twitter Sentiment Analysis
 
-1. [Async Branch](https://github.com/mjhea0/node-twitter-sentiment/tree/async)
+1. [Async](https://github.com/mjhea0/node-twitter-sentiment-async)
 2. Promises Branch
 3. Data Binding Branch
 4. Generators Branch
