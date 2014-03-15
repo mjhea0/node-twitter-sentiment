@@ -89,9 +89,9 @@ It's still going to return results after 5 seconds. This is not what we want, ob
 
 ## Data Binding
 
-> Thanks to [Aaron Vandrey](http://www.meetup.com/Node-js-Denver-Boulder/members/103374712/) for developing the code and writing the following explanation.
+**Thanks to [Aaron Vandrey](http://www.meetup.com/Node-js-Denver-Boulder/members/103374712/) for developing the code and writing the following explanation.**
 
-Although there are a number of frontend MV* frameworks that could be used, we chose the [KnockoutJS](https://github.com/knockout/knockout) data binding library for simplicity. KnockoutJS uses “observables” to enable two-way data binding from the View (HTML) back to the View-model (JavaScript). 
+Although there are a number of frontend MV* frameworks that could be used, we chose the [KnockoutJS](https://github.com/knockout/knockout) data binding library for simplicity. KnockoutJS uses "observables" to enable two-way data binding from the View (HTML) back to the View-model (JavaScript). 
 
 From [10 things to know about KnockoutJS on day one])http://www.knockmeout.net/2011/06/10-things-to-know-about-knockoutjs-on.html)":
 
@@ -107,11 +107,41 @@ A binding consists of two items, the binding name and value, separated by a colo
 
 ### Server Side Code
 
-4. Views
+#### Views
 
 Combining the functions in our *app.js* (more on this later) with Knockout’s declarative  data-binding syntax, we can set up the Jade template in the manner shown below. 
 
-In the original Jade template there are placeholder DIVs set up that we then use jQuery to interact with - to display the error messages and results. We also used jQuery to update the styles applied to the DIVs. Since we are using data binding in this example, we will go ahead and set up the DIVs for errors and results and have their HTML and styles in the DOM at all times. Then using the “visible” data binding on the DIVs we can hide and expose them as needed. In the example below we have a couple of data-bind attributes that KnockoutJS will use to handle the two-way communication from the View to the ViewModel and vise-versa.
+In the original Jade template there are placeholder DIVs set up that we then use jQuery to interact with - to display the error messages and results. We also used jQuery to update the styles applied to the DIVs. Since we are using data binding in this example, we will go ahead and set up the DIVs for errors and results and have their HTML and styles in the DOM at all times. Then using the "visible" data binding on the DIVs we can hide and expose them as needed. In the example below we have a couple of data-bind attributes that KnockoutJS will use to handle the two-way communication from the View to the ViewModel and vise-versa.
+
+```html
+.form-container
+  form(action='', method='post', data-bind='submit: formSubmit')
+    input#choice1.choice(type='text', placeholder='Choice #1...', name='choice1', data-bind='value: inputOne')
+    input#choice2.choice(type='text', placeholder='Choice #2...', name='choice2', data-bind='value: inputTwo')
+    input#decision.btn.btn-success.btn-lg(type='submit', value='Submit' data-bind='enable: !hasResults()')
+.decision-container
+  p(class='alert alert-danger' data-bind='visible: error, text: error')
+  div(class='progress progress-striped active' data-bind='visible: isProcessing()')
+    div(class='progress-bar progress-bar-primary' role='progressbar' aria-valuenow='100' aria-valuemin='0' aria-valuemax='100' style='width: 100%')
+      span(class='sr-only')
+  div(class='panel panel-lg panel-success' data-bind='visible: hasResults()')
+    div(class='panel-heading')
+      h3(class='panel-title') Decision Results
+    div(class='panel-body')
+      p(class='decision-text', data-bind='html: results')
+      div(class='text-center')
+        input#decision.btn.btn-success.btn-sm.text-center(type='button', value='Again?' data-bind='click: tryAgain')
+```
+
+In the highlighted text we can see just a few of the many [data-binding](http://knockoutjs.com/documentation/introduction.html) possibilities. 
+ 
+The `submit` binding will handle both the "click" event of the submit button as well as a user hitting the "enter" key. In the background KnockoutJS will also perform a "preventDefault" so that the form does not attempt to submit the form to the server.
+
+The `value` binding will update the ViewModel with the values entered into the text boxes. A form submit is not needed to consume these values, though in this case we are using a form submit. Alternatively we could use KnockoutJS to `subscribe` to the change event for these form values and begin our processing when our inputs passed validation.
+
+The `text` binding will both display values in the View propagated from the ViewModel, as well and send values from the View back to the ViewModel.
+
+The `enable` binding will disable the submit button when the ViewModel reports back to the View that it has results back from the Twitter Sentiment Analysis.
 
 ## Generators 
 
