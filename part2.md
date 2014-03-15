@@ -74,7 +74,7 @@ It's still going to return results after 5 seconds. This is not what we want, ob
 |------------------|--------------------------------------------------------------|------------------------------------------|
 | Async            | https://github.com/mjhea0/node-twitter-sentiment-async       | https://github.com/caolan/async          |
 | Promises         | https://github.com/mjhea0/node-twitter-sentiment-promises    | https://github.com/kriskowal/q           |
-| Data Binding     | https://github.com/mjhea0/node-twitter-sentiment-databinding | n/a                                      |
+| Data Binding     | https://github.com/mjhea0/node-twitter-sentiment-databinding | https://github.com/knockout/knockout                                      |
 | Generators       | https://github.com/mjhea0/node-twitter-sentiment-generators  | n/a                                      |
 | IcedCoffeeScript | n/a                                                          | https://github.com/maxtaco/coffee-script |
 
@@ -89,7 +89,29 @@ It's still going to return results after 5 seconds. This is not what we want, ob
 
 ## Data Binding
 
-- Add code and explanation
+> Thanks to [Aaron Vandrey](http://www.meetup.com/Node-js-Denver-Boulder/members/103374712/) for developing the code and writing the following explanation.
+
+Although there are a number of frontend MV* frameworks that could be used, we chose the [KnockoutJS](https://github.com/knockout/knockout) data binding library for simplicity. KnockoutJS uses “observables” to enable two-way data binding from the View (HTML) back to the View-model (JavaScript). 
+
+From [10 things to know about KnockoutJS on day one])http://www.knockmeout.net/2011/06/10-things-to-know-about-knockoutjs-on.html)":
+
+> Observables are functions. The actual value and subscribers to the observable are cached internally by the function. You set an observable’s value by passing the new value as the only argument to the function and you read the value by passing no arguments. 
+
+We can use these functions to read the values from the form directly, hide and expose DIVs and change text on the screen. 
+
+From the KnockoutJS data-binding [page](http://knockoutjs.com/documentation/binding-syntax.html): 
+
+> Knockout’s declarative binding system provides a concise and powerful way to link data to the UI. It’s generally easy and obvious to bind to simple data properties or to use a single binding.
+…
+A binding consists of two items, the binding name and value, separated by a colon.
+
+### Server Side Code
+
+4. Views
+
+Combining the functions in our *app.js* (more on this later) with Knockout’s declarative  data-binding syntax, we can set up the Jade template in the manner shown below. 
+
+In the original Jade template there are placeholder DIVs set up that we then use jQuery to interact with - to display the error messages and results. We also used jQuery to update the styles applied to the DIVs. Since we are using data binding in this example, we will go ahead and set up the DIVs for errors and results and have their HTML and styles in the DOM at all times. Then using the “visible” data binding on the DIVs we can hide and expose them as needed. In the example below we have a couple of data-bind attributes that KnockoutJS will use to handle the two-way communication from the View to the ViewModel and vise-versa.
 
 ## Generators 
 
