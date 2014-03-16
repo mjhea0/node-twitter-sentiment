@@ -64,7 +64,9 @@ exports.search = function(req, res) {
 
 Essentially we're grabbing the user inputted data, pulling tweets based on the inputs, and thenn calculating the sentiment of those tweets. The timeout is necessary because of how Node [works](http://stackoverflow.com/questions/7931537/whats-the-difference-between-asynchronous-non-blocking-event-base-architectu/9489547#9489547). Because Node is asynchronous, long running functions do not block other functions from running. Without the 5 second timout, the next function will append the results to the Dom without waiting for the function to finish running. Essentially, nothing is appended. Make sense?
 
-Timeouts are problamic though. 
+Put another way, when most other languages have a long-running function, they wait there for the result to come back. Node, on the other hand, will continue executing the code that comes after it, then jump back when the result is available.
+
+So, why won't a timeout work then?
 
 Again, the code has a function that sends the result in 5 seconds, regardless as to the execution state of the call to twitter. What happens though, if we run the program without a network connection? Or if Twitter is down? Or if we pulled in 10,000 tweets instead of 20?
 
@@ -81,7 +83,201 @@ It's still going to return results after 5 seconds. This is not what we want, ob
 
 ## Async
 
-- Add code and explanation
+One solution is to use the [Async](https://github.com/caolan/async). This is often the go-to solution, since the syntax is simple, it's totally straightforward, and it uses call backs. In fact, in order to use Async, you must follow the convention of providing the callback as the last argument of the Async function. Thus, for users used to callbacks, this is an extremely easy solution.
+
+### Basics
+
+1. Start by installing the package:
+   ```sh
+   $ npm install async
+   ```
+
+2. In our code we will be using the `map()` helper method, which takes an array, a filter function, and a callback. The filter function is an async function that takes a callback.
+
+2. Simple example:
+  ```javascript
+  var async = require('async');
+
+  var names = ["michael","richard","john","jennifer","ben","julie"];
+
+  async.map(names, getInfo, function (err, result) {
+    if(!err) {
+      console.log('Finished: ' + result);
+    } else {
+      console.log('Error: ' + err);
+    }
+
+  });
+
+  function getInfo(name, callback) {
+    setTimeout(function() {
+      callback(null, name.toUpperCase());
+    }, 1000);
+  }
+  ```
+
+  Test it out [here](http://runnable.com/UyXKBzE8BKUZRnR5/node-async-map-example-for-node-js).
+
+  Basically, we have an array of names, in lower case, which we are converting to upppercase, then outputting via a `console.log`. Let's say that another function depended on the results of `getInfo`, if `getInfo` was long-running, then the other function could fire before `getInfo` returned the results. Thus, the need to suspend the function until the results are returned.
+
+### Update Node-Twitter-Sentiment
+
+We just need to update the *index.js* file in the "routes" folder:
+```javascript
+"use strict";
+
+var path = require("path");
+var twit = require('twit');
+var sentimental = require('Sentimental');
+var config = require("../config");
+var async = require('async');
+
+exports.index = function(req, res){
+  res.render('index', { title: "Twit-Decision"});
+};
+
+exports.ping = function(req, res){
+  res.send("pong!", 200);
+};
+
+exports.search = function(req, res) {
+  // grab the request from the client
+  var choices = JSON.parse(req.body.choices);
+  // grab the current date
+  var today = new Date();
+  // establish the twitter config (grab your keys at dev.twitter.com)
+  var twitter = new twit({
+    consumer_key: config.consumer_key,
+    consumer_secret: config.consumer_secret,
+    access_token: config.access_token,
+    access_token_secret: config.access_token_secret
+  });
+  console.log("----------")
+
+  // grade 20 tweets from today with keyword choice and call callback
+  // when done
+  function getAndScoreTweets(choice, callback) {
+    twitter.get('search/tweets', {q: '' + choice + ' since:' + today.getFullYear() + '-' + 
+      (today.getMonth() + 1) + '-' + today.getDate(), count:20}, function(err, data) {
+        // perfrom sentiment analysis (see below)
+      if(err) {
+        console.log(err);
+        callback(err.message, undefined);
+        return;
+      }
+      var score = performAnalysis(data['statuses']);
+      console.log("score:", score)
+      console.log("choice:", choice)
+      callback(null, score);
+    });
+  }
+  //Grade tweets for each choice in parallel and compute winner when
+  //all scores are collected
+  async.map(choices, getAndScoreTweets, function(err, scores) {
+    if(err) {
+      console.log("Unable to score all tweets");
+      res.end(JSON.stringify(err));
+    }
+    var highestChoice = choices[0];
+    var highestScore = scores.reduce(function(prev, cur, index) { 
+      if(prev < cur) {
+        highestChoice = choices[index];
+        return cur;
+      } else {
+        return prev;
+      }
+    });
+    res.end(JSON.stringify({'score': highestScore, 'choice': highestChoice}));
+  });             
+}
+
+function performAnalysis(tweetSet) {
+  //set a results variable
+  var results = 0;
+  // iterate through the tweets, pulling the text, retweet count, and favorite count
+  for(var i = 0; i < tweetSet.length; i++) {
+    var tweet = tweetSet[i]['text'];
+    var retweets = tweetSet[i]['retweet_count'];
+    var favorites = tweetSet[i]['favorite_count'];
+    // remove the hashtag from the tweet text
+    tweet = tweet.replace('#', '');
+    // perfrom sentiment on the text
+    var score = sentimental.analyze(tweet)['score'];
+    // calculate score
+    results += score;
+    if(score > 0){
+      if(retweets > 0) {
+        results += (Math.log(retweets)/Math.log(2));
+      }
+      if(favorites > 0) {
+        results += (Math.log(favorites)/Math.log(2));
+      }
+    }
+    else if(score < 0){
+      if(retweets > 0) {
+        results -= (Math.log(retweets)/Math.log(2));
+      }
+      if(favorites > 0) {
+        results -= (Math.log(favorites)/Math.log(2));
+      }
+    }
+    else {
+      results += 0;
+    }
+  }
+  // return score
+  results = results / tweetSet.length;
+  return results
+}
+```
+
+#### What's going on?
+
+Let's look at the specifc changes:
+
+```javascript
+// grade 20 tweets from today with keyword choice and call callback
+// when done
+function getAndScoreTweets(choice, callback) {
+  twitter.get('search/tweets', {q: '' + choice + ' since:' + today.getFullYear() + '-' + 
+    (today.getMonth() + 1) + '-' + today.getDate(), count:20}, function(err, data) {
+      // perfrom sentiment analysis (see below)
+    if(err) {
+      console.log(err);
+      callback(err.message, undefined);
+      return;
+    }
+    var score = performAnalysis(data['statuses']);
+    console.log("score:", score)
+    console.log("choice:", choice)
+    callback(null, score);
+  });
+}
+//Grade tweets for each choice in parallel and compute winner when
+//all scores are collected
+async.map(choices, getAndScoreTweets, function(err, scores) {
+  if(err) {
+    console.log("Unable to score all tweets");
+    res.end(JSON.stringify(err));
+  }
+  var highestChoice = choices[0];
+  var highestScore = scores.reduce(function(prev, cur, index) { 
+    if(prev < cur) {
+      highestChoice = choices[index];
+      return cur;
+    } else {
+      return prev;
+    }
+  });
+  res.end(JSON.stringify({'score': highestScore, 'choice': highestChoice}));
+});             
+```
+
+We pass in the `choices` array, the `getAndScoreTweets()` function (which handles the calculating of sentiment), then the results are serialized and sent back to the client. Async suspends the `getAndScoreTweets()` function until it's done running. Thus, the results are not sent back to the client until Sentiment is done.
+
+Simple, right?
+
+Check out the final code here: [https://github.com/mjhea0/node-twitter-sentiment-async](https://github.com/mjhea0/node-twitter-sentiment-async)
 
 ## Promises 
 
