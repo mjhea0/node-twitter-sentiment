@@ -79,7 +79,7 @@ It's still going to return results after 5 seconds. This is not what we want, ob
 | IcedCoffeeScript | n/a                                                          | https://github.com/maxtaco/coffee-script |
 
 
-## Ascnc
+## Async
 
 - Add code and explanation
 
@@ -264,7 +264,36 @@ I hope this makes sense. Check out the final code here: [https://github.com/mjhe
 
 ## Generators 
 
-- Add code and explanation
+Generators are the new kid on the block, but they look the most promising. Essentially, they make it easy to suspend/pause a function then resume it with the `yield` function. 
+
+Let's look at a quick example. 
+
+### Example
+
+First, make sure you are using a browser that supports ES6: [http://kangax.github.io/es5-compat-table/es6/#Generators_(yield)](http://kangax.github.io/es5-compat-table/es6/#Generators_(yield)). I personally use [Chrome Canary]*https://www.google.com/intl/en/chrome/browser/canary.html), with experimental Javasctipt enabled: "chrome://flags/#enable-javascript-harmony".
+
+Open the Javascript console, then enter this generator function:
+
+```javascript
+function* naturalNumbers(){
+  var n = 1;
+  while (true){
+    yield n++;
+  }
+}
+```
+
+Next, you can call the function with this line:
+
+```javascript
+var numbers = naturalNumbers();
+```
+
+Finally, you can generate an object with the returned values by calling `numbers.next()`
+
+
+
+
 
 ## IcedCoffeeScript
 
