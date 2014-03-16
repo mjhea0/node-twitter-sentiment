@@ -475,14 +475,14 @@ Let's look at a quick example.
 ### Example
 
 Open the Javascript console, then enter this generator function:
-  ```javascript
-  function* naturalNumbers(){
-    var n = 1;
-    while (true){
-      yield n++;
-    }
+```javascript
+function* naturalNumbers(){
+  var n = 1;
+  while (true){
+    yield n++;
   }
-  ```
+}
+```
 
 Next, you can call the function with this line:
 
@@ -493,6 +493,8 @@ var numbers = naturalNumbers();
 Finally, you can generate an object with the returned values by calling `numbers.next()`
 
 ![es6-generators](https://raw.github.com/mjhea0/node-twitter-sentiment/master/es6-generators.png)
+
+So, how do we ad this to our Sentiment project? I'm not sure. :)
 
 
 ## IcedCoffeeScript
