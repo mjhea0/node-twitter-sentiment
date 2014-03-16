@@ -494,12 +494,25 @@ Finally, you can generate an object with the returned values by calling `numbers
 
 ![es6-generators](https://raw.github.com/mjhea0/node-twitter-sentiment/master/es6-generators.png)
 
-So, how do we ad this to our Sentiment project? I'm not sure. :)
+So, how do we add this to our Sentiment project? I'm not sure. :)
 
 
 ## IcedCoffeeScript
 
-- Add code and explanation
+### Example
+
+```coffeescript
+et = require 'errTo'
+{get} = require 'request'
+fn = (done) ->
+  await get 'http://foo.com', et done, defer resp, body
+  await get 'http://bar.com', et done, defer resp, body
+  do done
+await fn defer err
+throw err if err
+```
+
+So, how do we ad this to our Sentiment project? I'm not sure. :)
 
 
 ## Conclusion
