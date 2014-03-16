@@ -83,6 +83,8 @@ It's still going to return results after 5 seconds. This is not what we want, ob
 
 ## Async
 
+**Thanks to [Manish Vachharajani](http://www.meetup.com/Node-js-Denver-Boulder/members/8358230/) for developing the code for this example.**
+
 One solution is to use the [Async](https://github.com/caolan/async). This is often the go-to solution, since the syntax is simple, it's totally straightforward, and it uses call backs. In fact, in order to use Async, you must follow the convention of providing the callback as the last argument of the Async function. Thus, for users used to callbacks, this is an extremely easy solution.
 
 ### Basics
