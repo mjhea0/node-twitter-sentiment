@@ -291,7 +291,7 @@ var numbers = naturalNumbers();
 
 Finally, you can generate an object with the returned values by calling `numbers.next()`
 
-
+![es6-generators](https://raw.github.com/mjhea0/node-twitter-sentiment/master/es6-generators.png)
 
 
 
