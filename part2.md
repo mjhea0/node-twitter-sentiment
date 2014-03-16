@@ -468,7 +468,7 @@ Let's look at a quick example.
 
 ### Example
 
-First, make sure you are using a browser that supports ES6: [http://kangax.github.io/es5-compat-table/es6/#Generators_(yield)](http://kangax.github.io/es5-compat-table/es6/#Generators_(yield)). I personally use [Chrome Canary]*https://www.google.com/intl/en/chrome/browser/canary.html), with experimental Javasctipt enabled: "chrome://flags/#enable-javascript-harmony".
+First, make sure you are using a browser that supports ES6: [http://kangax.github.io/es5-compat-table/es6/#Generators_(yield)](http://kangax.github.io/es5-compat-table/es6/#Generators_(yield)). I personally use [Chrome Canary](https://www.google.com/intl/en/chrome/browser/canary.html), with experimental Javasctipt enabled: "chrome://flags/#enable-javascript-harmony".
 
 Open the Javascript console, then enter this generator function:
 
