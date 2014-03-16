@@ -464,22 +464,25 @@ I hope this makes sense. Check out the final code here: [https://github.com/mjhe
 
 Generators are the new kid on the block, but they look the most promising. Essentially, they make it easy to suspend/pause a function then resume it with the `yield` function. 
 
+> Make sure you are using a browser that supports ES6: [http://kangax.github.io/es5-compat-table/es6/#Generators_(yield)](http://kangax.github.io/es5-compat-table/es6/#Generators_(yield)). I personally use [Chrome Canary](https://www.google.com/intl/en/chrome/browser/canary.html), with experimental Javasctipt enabled: "chrome://flags/#enable-javascript-harmony".
+
+... also ...
+
+> As of Node v0.11.3, you must use the `--harmony_generators` flag for running applications that contain generator examples in order to enable ES6 experimental features - e.g., `node --harmony_generators app.js`.
+
 Let's look at a quick example. 
 
 ### Example
 
-First, make sure you are using a browser that supports ES6: [http://kangax.github.io/es5-compat-table/es6/#Generators_(yield)](http://kangax.github.io/es5-compat-table/es6/#Generators_(yield)). I personally use [Chrome Canary](https://www.google.com/intl/en/chrome/browser/canary.html), with experimental Javasctipt enabled: "chrome://flags/#enable-javascript-harmony".
-
 Open the Javascript console, then enter this generator function:
-
-```javascript
-function* naturalNumbers(){
-  var n = 1;
-  while (true){
-    yield n++;
+  ```javascript
+  function* naturalNumbers(){
+    var n = 1;
+    while (true){
+      yield n++;
+    }
   }
-}
-```
+  ```
 
 Next, you can call the function with this line:
 
@@ -492,7 +495,6 @@ Finally, you can generate an object with the returned values by calling `numbers
 ![es6-generators](https://raw.github.com/mjhea0/node-twitter-sentiment/master/es6-generators.png)
 
 
-
 ## IcedCoffeeScript
 
 - Add code and explanation
@@ -501,3 +503,5 @@ Finally, you can generate an object with the returned values by calling `numbers
 ## Conclusion
 
 Thanks to [John Rosendahl](http://www.meetup.com/Node-js-Denver-Boulder/members/74687302/) for help with writing the intro.
+
+Pull requests are welcomed/encouraged/needed. Enjoy!
