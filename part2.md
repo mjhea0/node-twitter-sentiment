@@ -235,7 +235,7 @@ function performAnalysis(tweetSet) {
 
 #### What's going on?
 
-Let's look at the specifc changes:
+Let's look at the specific changes:
 
 ```javascript
 // grade 20 tweets from today with keyword choice and call callback
@@ -275,7 +275,9 @@ async.map(choices, getAndScoreTweets, function(err, scores) {
 });             
 ```
 
-We pass in the `choices` array, the `getAndScoreTweets()` function (which handles the calculating of sentiment), then the results are serialized and sent back to the client. Async suspends the `getAndScoreTweets()` function until it's done running. Thus, the results are not sent back to the client until Sentiment is done.
+We pass in the `choices` array, the `getAndScoreTweets()` function (which handles the calculating of sentiment), then the results are serialized and sent back to the client. `async.map()` suspends the `getAndScoreTweets()` function until it's done running. Thus, the results are not sent back to the client until Sentiment is done.
+
+Further, `async.map()` allows you to do a long delay operation on each array element because of the fact that the mapped function must call "callback" - which happens in the `getInfo()` function.
 
 Simple, right?
 
